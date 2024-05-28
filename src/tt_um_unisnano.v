@@ -2,28 +2,33 @@
 
 
 module tt_um_unisnano
-   #( // with 100MHZ clock
-      // 9600 baud, 8 data bits, 1 stop bit, 2^2 FIFO
-      parameter DBIT = 8,     // # data 
-                SB_TICK = 16, // # ticks for stop bits, 16/24/32
-                              // for 1/1.5/2 stop bits
-                DVSR = 54,   // baud rate divisor
-                              // DVSR = 50M/(16*baud rate)
-                DVSR_BIT = 10 // # bits of DVSR     
-                              // # words in FIFO=2^FIFO_W
-                
-   )
-   (
-    input wire clk, rst_n,
-    input wire  rx,
-    output tx,
-    //BELOW DAC interface
-    output reg output1,output2
+  (
+  input wire [7:0] ui_in, // Dedicated inputs
+output wire [7:0] uo_out, // Dedicated outputs
+input wire [7:0] uio_in, // IOs: Input path
+output wire [7:0] uio_out, // IOs: Output path
+output wire [7:0] uio_oe, // IOs: Enable path (active high: 0=input, 1=output)
+input wire ena, // always 1 when the design is powered, so you can ignore it
+input wire clk, // clock
+input wire rst_n // reset_n - low to reset
+
+);
+//   (
+//    input wire clk, reset,
+//    input wire  rx,
+//    output tx,
+//    //BELOW DAC interface
+//    output reg output1,output2
     
      
-   );
+//   );
    
-   
+   reg output1,output2;
+  wire rx;
+  assign rx=ui_in[3];
+  assign uo_out[4]=tx;
+  assign uo_out[1]=output1;
+  assign uo_out[2]=output2;
   
    reg tx_start=0;
    
@@ -40,15 +45,15 @@ module tt_um_unisnano
   reg[7:0] din;
   reg [9:0] addr,start_addr,stop_addr;
   
-   mod_m_counter #(.M(DVSR), .N(DVSR_BIT)) baud_gen_unit
-      (.clk(clk), .reset(rst_n), .q(), .max_tick(tick));
+   mod_m_counter #(.M(54), .N(10)) baud_gen_unit
+      (.clk(clk), .reset(!rst_n), .q(), .max_tick(tick));
       
-   uart_rx #(.DBIT(DBIT), .SB_TICK(SB_TICK)) uart_rx_unit
-      (.clk(clk), .reset(rst_n), .rx(rx), .s_tick(tick),
+   uart_rx #(.DBIT(8), .SB_TICK(16)) uart_rx_unit
+      (.clk(clk), .reset(!rst_n), .rx(rx), .s_tick(tick),
        .rx_done_tick(rx_done_tick), .dout(rx_data_out));
 
-   uart_tx #(.DBIT(DBIT), .SB_TICK(SB_TICK)) uart_tx_unit
-      (.clk(clk), .reset(rst_n), .tx_start(tx_start),
+   uart_tx #(.DBIT(8), .SB_TICK(16)) uart_tx_unit
+      (.clk(clk), .reset(!rst_n), .tx_start(tx_start),
        .s_tick(tick), .din(din),
        .tx_done_tick(tx_done_tick), .tx(tx) );
 
@@ -63,7 +68,7 @@ module tt_um_unisnano
 
      always @(posedge clk)
         begin
-            if(rst_n)//reset is needed
+            if(!rst_n)//reset is needed
                 begin 
                     state<=0;    
                     
