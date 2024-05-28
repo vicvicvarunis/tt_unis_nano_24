@@ -22,13 +22,20 @@ input wire rst_n // reset_n - low to reset
     
      
 //   );
+
+	
    
    reg output1,output2;
   wire rx;
   assign rx=ui_in[3];
-  assign uo_out[4]=tx;
+  assign uo_out[0]=1'b0;
   assign uo_out[1]=output1;
   assign uo_out[2]=output2;
+  assign uo_out[3]=1'b0;
+  assign uo_out[4]=tx;
+  assign uo_out[5]=1'b0;
+  assign uo_out[6]=1'b0;
+  assign uo_out[7]=1'b0;
   
    reg tx_start=0;
    
