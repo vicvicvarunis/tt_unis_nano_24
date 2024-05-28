@@ -37,8 +37,8 @@ input wire rst_n // reset_n - low to reset
   assign uo_out[6]=1'b0;
   assign uo_out[7]=1'b0;
   
-  assign uio_out = 0x00;
-  assign uio_oe = 0x00;
+  assign uio_out = 8'b00000000;
+  assign uio_oe = 8'b00000000;
   
    reg tx_start=0;
    
