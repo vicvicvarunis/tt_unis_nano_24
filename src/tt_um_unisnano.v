@@ -1,6 +1,4 @@
 
-
-
 module tt_um_unisnano
   (
   input wire [7:0] ui_in, // Dedicated inputs
@@ -22,13 +20,23 @@ input wire rst_n // reset_n - low to reset
     
      
 //   );
-
-	
    
    reg output1,output2;
-  wire rx;
+  wire rx,tx;
   assign rx=ui_in[3];
-  assign uo_out[0]=1'b0;
+  assign uo_out[4]=tx;
+  assign uo_out[1]=output1;
+  assign uo_out[2]=output2;
+  
+   reg tx_start=0;
+   
+   wire tick, rx_done_tick, tx_done_tick;
+   
+   wire [7:0] rx_data_out;
+   wire [7:0]  dout_rom;
+   reg [29:0] counter=0;
+  
+     assign uo_out[0]=1'b0;
   assign uo_out[1]=output1;
   assign uo_out[2]=output2;
   assign uo_out[3]=1'b0;
@@ -39,16 +47,6 @@ input wire rst_n // reset_n - low to reset
   
   assign uio_out = 8'b00000000;
   assign uio_oe = 8'b00000000;
-  
-   reg tx_start=0;
-   
-   wire tick, rx_done_tick, tx_done_tick;
-   
-   wire [7:0] rx_data_out;
-   wire [7:0]  dout_rom;
-   reg [29:0] counter=0;
-  
-   
    
    reg [3:0] state=0;
   
@@ -92,7 +90,7 @@ input wire rst_n // reset_n - low to reset
                                 addr<=0;
                                 state<=state+1;  
                                 start_addr<=0;
-                                stop_addr<=258;
+                                stop_addr<=69;
                             end
                         4'd1:
                             begin   
@@ -148,40 +146,29 @@ input wire rst_n // reset_n - low to reset
                                         
                                         if(rx_data_out==49)// 1
                                             begin
-                                                start_addr<=259;
-                                                stop_addr<=322;
+                                                start_addr<=70;
+                                                stop_addr<=77;
                                                 state<=state+1;
                                             end
                                         else if(rx_data_out==50)// 2
                                             begin
-                                                start_addr<=323;
-                                                stop_addr<=386;
+                                                start_addr<=78;
+                                                stop_addr<=89;
                                                 state<=state+1;
                                             end
                                         else if(rx_data_out==51)// 3
                                             begin
-                                                start_addr<=387;
-                                                stop_addr<=416;
+                                                start_addr<=90;
+                                                stop_addr<=121;
                                                 state<=state+1;
                                             end
-                                        else if(rx_data_out==52)// 4
-                                            begin
-                                                start_addr<=417;
-                                                stop_addr<=517;
-                                                state<=state+1;
-                                            end
-                                        else if(rx_data_out==53)// 5
-                                            begin
-                                                start_addr<=518;
-                                                stop_addr<=526;
-                                                state<=state+1;
-                                            end 
-                                        else if(rx_data_out==54)// 6
+
+                                        else if(rx_data_out==52)// 6
                                             begin
                                                 output1<=!output1;
                                                 state<=0;
                                             end
-                                        else if(rx_data_out==55)// 7
+                                        else if(rx_data_out==53)// 7
                                             begin
                                                 output2<=!output2;
                                                 state<=0;
