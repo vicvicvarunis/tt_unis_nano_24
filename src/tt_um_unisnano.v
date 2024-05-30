@@ -11,15 +11,7 @@ input wire clk, // clock
 input wire rst_n // reset_n - low to reset
 
 );
-//   (
-//    input wire clk, reset,
-//    input wire  rx,
-//    output tx,
-//    //BELOW DAC interface
-//    output reg output1,output2
-    
-     
-//   );
+
    
    reg output1,output2;
   wire rx,tx;

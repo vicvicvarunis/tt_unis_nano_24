@@ -1,4 +1,4 @@
-// Listing 4.11
+
 module mod_m_counter
    #(
     parameter N=27, // number of bits in counter
