@@ -1,24 +1,40 @@
 
+
+
 module tt_um_unisnano
-  (
-  input wire [7:0] ui_in, // Dedicated inputs
-output wire [7:0] uo_out, // Dedicated outputs
-input wire [7:0] uio_in, // IOs: Input path
-output wire [7:0] uio_out, // IOs: Output path
-output wire [7:0] uio_oe, // IOs: Enable path (active high: 0=input, 1=output)
-input wire ena, // always 1 when the design is powered, so you can ignore it
-input wire clk, // clock
-input wire rst_n // reset_n - low to reset
+
+(
+	input wire [7:0] ui_in, // Dedicated inputs
+	output wire [7:0] uo_out, // Dedicated outputs
+	input wire [7:0] uio_in, // IOs: Input path
+	output wire [7:0] uio_out, // IOs: Output path
+	output wire [7:0] uio_oe, // IOs: Enable path (active high: 0=input, 1=output)
+	input wire ena, // always 1 when the design is powered, so you can ignore it
+	input wire clk, // clock
+	input wire rst_n // reset_n - low to reset
 
 );
 
    
-   reg output1,output2;
-  wire rx,tx;
-  assign rx=ui_in[3];
-  assign uo_out[4]=tx;
-  assign uo_out[1]=output1;
-  assign uo_out[2]=output2;
+	reg output1,output2;
+	wire rx,tx;
+	assign rx=ui_in[3];
+	assign uo_out[0]=1'b0;
+	assign uo_out[1]=output1;
+	assign uo_out[2]=output2;
+	assign uo_out[3]=1'b0;
+	assign uo_out[4]=tx;
+	assign uo_out[5]=1'b0;
+	assign uo_out[6]=1'b0;
+	assign uo_out[7]=1'b0;
+	
+	assign uio_out = 8'b00000000;
+	assign uio_oe = 8'b00000000;
+  
+  
+  
+//  wire rst_n;
+//  assign rst_n=!reset;
   
    reg tx_start=0;
    
@@ -28,24 +44,14 @@ input wire rst_n // reset_n - low to reset
    wire [7:0]  dout_rom;
    reg [29:0] counter=0;
   
-     assign uo_out[0]=1'b0;
-  assign uo_out[1]=output1;
-  assign uo_out[2]=output2;
-  assign uo_out[3]=1'b0;
-  assign uo_out[4]=tx;
-  assign uo_out[5]=1'b0;
-  assign uo_out[6]=1'b0;
-  assign uo_out[7]=1'b0;
-  
-  assign uio_out = 8'b00000000;
-  assign uio_oe = 8'b00000000;
+   
    
    reg [3:0] state=0;
   
   reg[7:0] din;
   reg [9:0] addr,start_addr,stop_addr;
   
-   mod_m_counter #(.M(54), .N(10)) baud_gen_unit
+   mod_m_counter #(.M(27), .N(10)) baud_gen_unit
       (.clk(clk), .reset(!rst_n), .q(), .max_tick(tick));
       
    uart_rx #(.DBIT(8), .SB_TICK(16)) uart_rx_unit
@@ -82,7 +88,7 @@ input wire rst_n // reset_n - low to reset
                                 addr<=0;
                                 state<=state+1;  
                                 start_addr<=0;
-                                stop_addr<=69;
+                                stop_addr<=97;
                             end
                         4'd1:
                             begin   
@@ -138,29 +144,29 @@ input wire rst_n // reset_n - low to reset
                                         
                                         if(rx_data_out==49)// 1
                                             begin
-                                                start_addr<=70;
-                                                stop_addr<=77;
+                                                start_addr<=98;
+                                                stop_addr<=105;
                                                 state<=state+1;
                                             end
                                         else if(rx_data_out==50)// 2
                                             begin
-                                                start_addr<=78;
-                                                stop_addr<=89;
+                                                start_addr<=106;
+                                                stop_addr<=162;
                                                 state<=state+1;
                                             end
                                         else if(rx_data_out==51)// 3
                                             begin
-                                                start_addr<=90;
-                                                stop_addr<=121;
+                                                start_addr<=163;
+                                                stop_addr<=192;
                                                 state<=state+1;
                                             end
 
-                                        else if(rx_data_out==52)// 6
+                                        else if(rx_data_out==52)// 4
                                             begin
                                                 output1<=!output1;
                                                 state<=0;
                                             end
-                                        else if(rx_data_out==53)// 7
+                                        else if(rx_data_out==53)// 5
                                             begin
                                                 output2<=!output2;
                                                 state<=0;
